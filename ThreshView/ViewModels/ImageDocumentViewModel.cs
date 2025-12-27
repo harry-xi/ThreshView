@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,21 +13,27 @@ namespace ThreshView.ViewModels;
 public class ImageDocumentViewModel : ViewModelBase
 {
     readonly IImageProcessing _processing;
+    readonly MainWindowViewModel _mainWindowViewModel;
     CancellationTokenSource? _cts;
 
     public ImageDocumentModel Model { get; }
 
-    public ImageDocumentViewModel(ImageDocumentModel model, IImageProcessing processing)
+    public ImageDocumentViewModel(ImageDocumentModel model, IImageProcessing processing, MainWindowViewModel mainWindowViewModel)
     {
         Model = model;
         _processing = processing;
-        Threshold = 128;
-        OverlayR = 255;
-        OverlayG = 0;
-        OverlayB = 0;
-        OverlayA = 128; // semi-transparent
+        _mainWindowViewModel = mainWindowViewModel;
+        _mainWindowViewModel.PropertyChanged += MainWindowViewModel_PropertyChanged;
         // produce initial thresholded preview
         _ = RecomputeThresholdAsync();
+    }
+
+    private void MainWindowViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainWindowViewModel.Threshold) || e.PropertyName == nameof(MainWindowViewModel.ThresholdColor))
+        {
+            _ = RecomputeThresholdAsync();
+        }
     }
 
     public string FileName => System.IO.Path.GetFileName(Model.FilePath);
@@ -39,56 +46,6 @@ public class ImageDocumentViewModel : ViewModelBase
     {
         get => _thresholdedPreview;
         private set => this.RaiseAndSetIfChanged(ref _thresholdedPreview, value);
-    }
-
-    public int Threshold
-    {
-        get;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref field, value);
-            _ = RecomputeThresholdAsync();
-        }
-    }
-
-    public byte OverlayR
-    {
-        get;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref field, value);
-            _ = RecomputeThresholdAsync();
-        }
-    }
-
-    public byte OverlayG
-    {
-        get;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref field, value);
-            _ = RecomputeThresholdAsync();
-        }
-    }
-
-    public byte OverlayB
-    {
-        get;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref field, value);
-            _ = RecomputeThresholdAsync();
-        }
-    }
-
-    public byte OverlayA
-    {
-        get;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref field, value);
-            _ = RecomputeThresholdAsync();
-        }
     }
 
     public async Task RecomputeThresholdAsync()
@@ -105,12 +62,23 @@ public class ImageDocumentViewModel : ViewModelBase
             if (Model.PreviewColorBuffer == null || Model.PreviewColorBuffer.Length == 0)
             {
                 // fallback to simple threshold bitmap
-                var fb = await _processing.ThresholdToBitmapAsync(Model.GrayscaleBuffer, Model.Width, Model.Height, Threshold, ct).ConfigureAwait(false);
+                var fb = await _processing.ThresholdToBitmapAsync(Model.GrayscaleBuffer, Model.Width, Model.Height, _mainWindowViewModel.Threshold, ct).ConfigureAwait(false);
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => ThresholdedPreview = fb);
                 return;
             }
 
-            var wb = await _processing.CompositeOverlayAsync(Model.GrayscaleBuffer, Model.PreviewColorBuffer, Model.Width, Model.Height, Threshold, OverlayR, OverlayG, OverlayB, OverlayA, ct).ConfigureAwait(false);
+            var color = _mainWindowViewModel.ThresholdColor;
+            var wb = await _processing.CompositeOverlayAsync(
+                Model.GrayscaleBuffer,
+                Model.PreviewColorBuffer,
+                Model.Width,
+                Model.Height,
+                _mainWindowViewModel.Threshold,
+                color.R,
+                color.G,
+                color.B,
+                color.A,
+                ct).ConfigureAwait(false);
 
             // marshal to UI thread
             await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
@@ -133,5 +101,6 @@ public class ImageDocumentViewModel : ViewModelBase
         _cts?.Cancel();
         _cts?.Dispose();
         _thresholdedPreview?.Dispose();
+        _mainWindowViewModel.PropertyChanged -= MainWindowViewModel_PropertyChanged;
     }
 }

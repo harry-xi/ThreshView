@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Media;
 using ReactiveUI;
 using ThreshView.Services;
 
@@ -33,6 +34,19 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    public Color ThresholdColor
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = new(100, 255, 0, 0);
+    
+    public int Threshold
+    {
+        get;
+        set =>
+            this.RaiseAndSetIfChanged(ref field, value);
+
+    } = 100;
     // Expose as ICommand so XAML analyzers recognize it
     public ICommand OpenCommand { get; }
 
@@ -46,7 +60,7 @@ public class MainWindowViewModel : ViewModelBase
         foreach (var path in res)
         {
             var model = await _loader.LoadImageAsync(path);
-            var vm = new ImageDocumentViewModel(model, _processing);
+            var vm = new ImageDocumentViewModel(model, _processing, this);
             OpenImages.Add(vm);
             SelectedImage = vm;
         }
