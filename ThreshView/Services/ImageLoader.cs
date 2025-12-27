@@ -12,46 +12,47 @@ namespace ThreshView.Services;
 
 public class ImageLoader : IImageLoader
 {
-    public async Task<ImageDocumentModel> LoadImageAsync(string path, int previewMaxSize = 1024, int thumbnailSize = 128, CancellationToken cancellationToken = default)
+    public async Task<ImageDocumentModel> LoadImageAsync(string path, int previewMaxSize = 1024,
+        int thumbnailSize = 128, CancellationToken cancellationToken = default)
     {
         // Load using ImageSharp to a known pixel format
         using var fs = File.OpenRead(path);
-        var img = await SixLabors.ImageSharp.Image.LoadAsync<Rgba32>(fs, cancellationToken).ConfigureAwait(false);
+        var img = await Image.LoadAsync<Rgba32>(fs, cancellationToken).ConfigureAwait(false);
 
-        int width = img.Width;
-        int height = img.Height;
+        var width = img.Width;
+        var height = img.Height;
 
         // Create preview (scaled) and thumbnail (scaled)
         var preview = img.Clone(ctx => ctx.Resize(new ResizeOptions
         {
             Mode = ResizeMode.Max,
-            Size = new SixLabors.ImageSharp.Size(previewMaxSize, previewMaxSize)
+            Size = new Size(previewMaxSize, previewMaxSize)
         }));
 
         var thumb = img.Clone(ctx => ctx.Resize(new ResizeOptions
         {
             Mode = ResizeMode.Max,
-            Size = new SixLabors.ImageSharp.Size(thumbnailSize, thumbnailSize)
+            Size = new Size(thumbnailSize, thumbnailSize)
         }));
 
         // Convert preview to grayscale buffer and color buffer (BGRA order for Avalonia)
-        int pW = preview.Width;
-        int pH = preview.Height;
+        var pW = preview.Width;
+        var pH = preview.Height;
         var gray = new byte[pW * pH];
         var color = new byte[pW * pH * 4];
         preview.ProcessPixelRows(accessor =>
         {
-            for (int y = 0; y < accessor.Height; y++)
+            for (var y = 0; y < accessor.Height; y++)
             {
                 var row = accessor.GetRowSpan(y);
-                for (int x = 0; x < row.Length; x++)
+                for (var x = 0; x < row.Length; x++)
                 {
                     var p = row[x];
                     // luminance
-                    float l = 0.2126f * p.R + 0.7152f * p.G + 0.0722f * p.B;
+                    var l = 0.2126f * p.R + 0.7152f * p.G + 0.0722f * p.B;
                     gray[y * pW + x] = (byte)Math.Clamp((int)l, 0, 255);
 
-                    int idx = (y * pW + x) * 4;
+                    var idx = (y * pW + x) * 4;
                     color[idx + 0] = p.B; // B
                     color[idx + 1] = p.G; // G
                     color[idx + 2] = p.R; // R

@@ -31,4 +31,3 @@ public class OverlayColorConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
-

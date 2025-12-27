@@ -10,7 +10,8 @@ namespace ThreshView.Services;
 
 public class ImageProcessing : IImageProcessing
 {
-    public Task<WriteableBitmap> ThresholdToBitmapAsync(byte[] grayscaleBuffer, int width, int height, int threshold, CancellationToken cancellationToken = default)
+    public Task<WriteableBitmap> ThresholdToBitmapAsync(byte[] grayscaleBuffer, int width, int height, int threshold,
+        CancellationToken cancellationToken = default)
     {
         // Create WriteableBitmap in BGRA8888
         var pixelFormat = PixelFormat.Bgra8888;
@@ -19,21 +20,21 @@ public class ImageProcessing : IImageProcessing
 
         using (var fb = wb.Lock())
         {
-            int stride = fb.RowBytes;
+            var stride = fb.RowBytes;
             var dest = new byte[stride * height];
 
-            for (int y = 0; y < height; y++)
+            for (var y = 0; y < height; y++)
             {
                 if (cancellationToken.IsCancellationRequested)
                     return Task.FromCanceled<WriteableBitmap>(cancellationToken);
 
-                int srcRow = y * width;
-                int rowStart = y * stride;
-                for (int x = 0; x < width; x++)
+                var srcRow = y * width;
+                var rowStart = y * stride;
+                for (var x = 0; x < width; x++)
                 {
-                    byte g = grayscaleBuffer[srcRow + x];
-                    byte v = (g >= threshold) ? (byte)255 : (byte)0;
-                    int col = rowStart + x * 4;
+                    var g = grayscaleBuffer[srcRow + x];
+                    var v = g >= threshold ? (byte)255 : (byte)0;
+                    var col = rowStart + x * 4;
                     dest[col + 0] = v; // B
                     dest[col + 1] = v; // G
                     dest[col + 2] = v; // R
@@ -48,7 +49,9 @@ public class ImageProcessing : IImageProcessing
         return Task.FromResult(wb);
     }
 
-    public Task<WriteableBitmap> CompositeOverlayAsync(byte[] grayscaleBuffer, byte[] previewColorBuffer, int width, int height, int threshold, byte overlayR, byte overlayG, byte overlayB, byte overlayA, CancellationToken cancellationToken = default)
+    public Task<WriteableBitmap> CompositeOverlayAsync(byte[] grayscaleBuffer, byte[] previewColorBuffer, int width,
+        int height, int threshold, byte overlayR, byte overlayG, byte overlayB, byte overlayA,
+        CancellationToken cancellationToken = default)
     {
         var pixelFormat = PixelFormat.Bgra8888;
         var dpi = new Vector(96, 96);
@@ -56,33 +59,33 @@ public class ImageProcessing : IImageProcessing
 
         using (var fb = wb.Lock())
         {
-            int stride = fb.RowBytes;
+            var stride = fb.RowBytes;
             var dest = new byte[stride * height];
 
-            float aF = overlayA / 255f;
+            var aF = overlayA / 255f;
 
-            for (int y = 0; y < height; y++)
+            for (var y = 0; y < height; y++)
             {
                 if (cancellationToken.IsCancellationRequested)
                     return Task.FromCanceled<WriteableBitmap>(cancellationToken);
 
-                int srcRow = y * width;
-                int srcColorRow = y * width * 4;
-                int rowStart = y * stride;
+                var srcRow = y * width;
+                var srcColorRow = y * width * 4;
+                var rowStart = y * stride;
 
-                for (int x = 0; x < width; x++)
+                for (var x = 0; x < width; x++)
                 {
-                    byte g = grayscaleBuffer[srcRow + x];
-                    int colorIdx = srcColorRow + x * 4;
-                    byte origB = previewColorBuffer[colorIdx + 0];
-                    byte origG = previewColorBuffer[colorIdx + 1];
-                    byte origR = previewColorBuffer[colorIdx + 2];
-                    byte origA = previewColorBuffer[colorIdx + 3];
+                    var g = grayscaleBuffer[srcRow + x];
+                    var colorIdx = srcColorRow + x * 4;
+                    var origB = previewColorBuffer[colorIdx + 0];
+                    var origG = previewColorBuffer[colorIdx + 1];
+                    var origR = previewColorBuffer[colorIdx + 2];
+                    var origA = previewColorBuffer[colorIdx + 3];
 
-                    byte outR = origR;
-                    byte outG = origG;
-                    byte outB = origB;
-                    byte outA = origA;
+                    var outR = origR;
+                    var outG = origG;
+                    var outB = origB;
+                    var outA = origA;
 
                     if (g >= threshold)
                     {
@@ -94,7 +97,7 @@ public class ImageProcessing : IImageProcessing
                         outA = 255;
                     }
 
-                    int col = rowStart + x * 4;
+                    var col = rowStart + x * 4;
                     dest[col + 0] = outB;
                     dest[col + 1] = outG;
                     dest[col + 2] = outR;

@@ -11,18 +11,17 @@
         Title="ThreshView">
 
     <Window.Resources>
-        <conv:OverlayColorConverter x:Key="OverlayColorConverter"/>
     </Window.Resources>
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="200,*,320" Margin="8">
         <StackPanel Orientation="Horizontal" Grid.ColumnSpan="3" HorizontalAlignment="Right">
-            <Button Content="Open..." Command="{Binding OpenCommand}" Margin="4"/>
+            <Button Content="Open..." Command="{Binding OpenCommand}" Margin="4" />
         </StackPanel>
 
         <!-- Left: Thumbnails -->
@@ -33,8 +32,9 @@
                         <DataTemplate DataType="vm:ImageDocumentViewModel">
                             <Border Padding="4" Margin="2" BorderBrush="LightGray" BorderThickness="1">
                                 <StackPanel Orientation="Vertical">
-                                    <Image Source="{Binding ThresholdedPreview}" Width="160" Height="120" Stretch="Uniform"/>
-                                    <TextBlock Text="{Binding FileName}" TextWrapping="Wrap" MaxWidth="160"/>
+                                    <Image Source="{Binding ThresholdedPreview}" Width="160" Height="120"
+                                           Stretch="Uniform" />
+                                    <TextBlock Text="{Binding FileName}" TextWrapping="Wrap" MaxWidth="160" />
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
@@ -44,19 +44,19 @@
         </Border>
 
 
-        <Image Grid.Row="1" Grid.Column="1" Source="{Binding SelectedImage.ThresholdedPreview}" Stretch="Uniform"  />
+        <Image Grid.Row="1" Grid.Column="1" Source="{Binding SelectedImage.ThresholdedPreview}" Stretch="Uniform" />
 
         <!-- Right: Threshold preview + controls -->
         <Border Grid.Row="1" Grid.Column="2" BorderBrush="Gray" BorderThickness="1" Padding="8">
             <StackPanel>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="4">
-                    <TextBlock Text="Threshold:" VerticalAlignment="Center" Margin="4"/>
-                    <Slider Minimum="0" Maximum="255" Width="200" Value="{Binding Threshold, Mode=TwoWay}"/>
-                    <TextBox Width="48" Text="{Binding Threshold, Mode=TwoWay}" Margin="6,0,0,0"/>
+                    <TextBlock Text="Threshold:" VerticalAlignment="Center" Margin="4" />
+                    <Slider Minimum="0" Maximum="255" Width="200" Value="{Binding Threshold, Mode=TwoWay}" />
+                    <TextBox Width="48" Text="{Binding Threshold, Mode=TwoWay}" Margin="6,0,0,0" />
                 </StackPanel>
-                
-                <TextBlock Text="Overlay Color" FontWeight="Bold" Margin="4,8,4,0"/>
-                <ColorView Color="{Binding ThresholdColor}"></ColorView>
+
+                <TextBlock Text="Overlay Color" FontWeight="Bold" Margin="4,8,4,0" />
+                <ColorView Color="{Binding ThresholdColor}" Palette="{Binding ColorPalette}" />
             </StackPanel>
         </Border>
     </Grid>
