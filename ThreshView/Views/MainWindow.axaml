@@ -3,7 +3,7 @@
         xmlns:vm="using:ThreshView.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:conv="using:ThreshView.Views.Converters"
+        xmlns:u="https://irihi.tech/ursa"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
         x:Class="ThreshView.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -25,7 +25,8 @@
         </StackPanel>
 
         <!-- Left: Thumbnails -->
-        <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" Padding="4">
+        <HeaderedContentControl Grid.Row="1" Grid.Column="0" Padding="4" Theme="{DynamicResource GroupBox}">
+        <!-- <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" Padding="4"> -->
             <ScrollViewer>
                 <ListBox ItemsSource="{Binding OpenImages}" SelectedItem="{Binding SelectedImage, Mode=TwoWay}">
                     <ListBox.ItemTemplate>
@@ -41,24 +42,28 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </ScrollViewer>
-        </Border>
+        <!-- </Border> -->
 
+        </HeaderedContentControl>
 
-        <Image Grid.Row="1" Grid.Column="1" Source="{Binding SelectedImage.ThresholdedPreview}" Stretch="Uniform" />
+        <u:ImageViewer Grid.Row="1" Grid.Column="1" Margin="4,0,4,0" Source="{Binding SelectedImage.ThresholdedPreview}" Stretch="Uniform" />
 
         <!-- Right: Threshold preview + controls -->
-        <Border Grid.Row="1" Grid.Column="2" BorderBrush="Gray" BorderThickness="1" Padding="8">
+        <HeaderedContentControl Grid.Row="1" Grid.Column="2" Padding="8" Theme="{DynamicResource GroupBox}">
             <StackPanel>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="4">
                     <TextBlock Text="Threshold:" VerticalAlignment="Center" Margin="4" />
-                    <Slider Minimum="0" Maximum="255" Width="200" Value="{Binding Threshold, Mode=TwoWay}" />
-                    <TextBox Width="48" Text="{Binding Threshold, Mode=TwoWay}" Margin="6,0,0,0" />
+                    <Slider Minimum="0" Maximum="255" Width="200" Value="{Binding Threshold, Mode=TwoWay}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <ToggleButton IsChecked="{Binding ThresholdMoreThen, Mode=TwoWay}">&lt;</ToggleButton> <ToggleButton IsChecked="{Binding !ThresholdMoreThen, Mode=TwoWay}">&gt;</ToggleButton>
+                        <TextBox Width="48" Text="{Binding Threshold, Mode=TwoWay}" Margin="6,0,0,0" />
+                    </StackPanel>
                 </StackPanel>
 
                 <TextBlock Text="Overlay Color" FontWeight="Bold" Margin="4,8,4,0" />
                 <ColorView Color="{Binding ThresholdColor}" Palette="{Binding ColorPalette}" />
             </StackPanel>
-        </Border>
+        </HeaderedContentControl>
     </Grid>
 
 </Window>

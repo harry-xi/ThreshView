@@ -50,7 +50,7 @@ public class ImageProcessing : IImageProcessing
     }
 
     public Task<WriteableBitmap> CompositeOverlayAsync(byte[] grayscaleBuffer, byte[] previewColorBuffer, int width,
-        int height, int threshold, byte overlayR, byte overlayG, byte overlayB, byte overlayA,
+        int height, int threshold,bool morethan, byte overlayR, byte overlayG, byte overlayB, byte overlayA,
         CancellationToken cancellationToken = default)
     {
         var pixelFormat = PixelFormat.Bgra8888;
@@ -87,7 +87,7 @@ public class ImageProcessing : IImageProcessing
                     var outB = origB;
                     var outA = origA;
 
-                    if (g >= threshold)
+                    if ((g >= threshold) == morethan)
                     {
                         // blend overlay color over original: out = overlay * aF + orig * (1-aF)
                         outR = (byte)Math.Clamp((int)(overlayR * aF + origR * (1f - aF)), 0, 255);

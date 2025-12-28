@@ -45,8 +45,8 @@ public class ImageDocumentViewModel : ViewModelBase
 
     private void MainWindowViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MainWindowViewModel.Threshold) ||
-            e.PropertyName == nameof(MainWindowViewModel.ThresholdColor)) _ = RecomputeThresholdAsync();
+        if (e.PropertyName is nameof(MainWindowViewModel.Threshold) or nameof(MainWindowViewModel.ThresholdColor)
+            or nameof(MainWindowViewModel.ThresholdMoreThen)) _ = RecomputeThresholdAsync();
     }
 
     public async Task RecomputeThresholdAsync()
@@ -76,6 +76,7 @@ public class ImageDocumentViewModel : ViewModelBase
                 Model.Width,
                 Model.Height,
                 _mainWindowViewModel.Threshold,
+                _mainWindowViewModel.ThresholdMoreThen,
                 color.R,
                 color.G,
                 color.B,

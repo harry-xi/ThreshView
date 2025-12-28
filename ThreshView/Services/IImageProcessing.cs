@@ -11,6 +11,6 @@ public interface IImageProcessing
 
     // Produce a composited overlay: for pixels >= threshold, blend overlayColor (BGRA) with previewColorBuffer using alpha.
     Task<WriteableBitmap> CompositeOverlayAsync(byte[] grayscaleBuffer, byte[] previewColorBuffer, int width,
-        int height, int threshold, byte overlayR, byte overlayG, byte overlayB, byte overlayA,
+        int height, int threshold,bool moreThan, byte overlayR, byte overlayG, byte overlayB, byte overlayA,
         CancellationToken cancellationToken = default);
 }

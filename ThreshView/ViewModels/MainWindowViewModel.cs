@@ -49,6 +49,13 @@ public class MainWindowViewModel : ViewModelBase
         set =>
             this.RaiseAndSetIfChanged(ref field, value);
     } = 100;
+    
+    public bool ThresholdMoreThen
+    {
+        get;
+        set =>
+            this.RaiseAndSetIfChanged(ref field, value);
+    } = true;
 
     // Expose as ICommand so XAML analyzers recognize it
     public ICommand OpenCommand { get; }

@@ -3,6 +3,7 @@
              x:Class="ThreshView.App"
              xmlns:local="using:ThreshView"
              xmlns:semi="https://irihi.tech/semi"
+             xmlns:u-Semi="https://irihi.tech/ursa/themes/semi"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -13,5 +14,6 @@
     <Application.Styles>
         <semi:SemiTheme Locale="zh-CN" />
         <semi:ColorPickerSemiTheme />
+        <u-Semi:SemiTheme Locale="zh-CN"/>
     </Application.Styles>
 </Application>
