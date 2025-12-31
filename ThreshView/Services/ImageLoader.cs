@@ -22,25 +22,10 @@ public class ImageLoader : IImageLoader
         var width = img.Width;
         var height = img.Height;
 
-        // Create preview (scaled) and thumbnail (scaled)
-        var preview = img.Clone(ctx => ctx.Resize(new ResizeOptions
-        {
-            Mode = ResizeMode.Max,
-            Size = new Size(previewMaxSize, previewMaxSize)
-        }));
-
-        var thumb = img.Clone(ctx => ctx.Resize(new ResizeOptions
-        {
-            Mode = ResizeMode.Max,
-            Size = new Size(thumbnailSize, thumbnailSize)
-        }));
-
-        // Convert preview to grayscale buffer and color buffer (BGRA order for Avalonia)
-        var pW = preview.Width;
-        var pH = preview.Height;
-        var gray = new byte[pW * pH];
-        var color = new byte[pW * pH * 4];
-        preview.ProcessPixelRows(accessor =>
+        // 用原图生成主buffer
+        var gray = new byte[width * height];
+        var color = new byte[width * height * 4];
+        img.ProcessPixelRows(accessor =>
         {
             for (var y = 0; y < accessor.Height; y++)
             {
@@ -48,18 +33,28 @@ public class ImageLoader : IImageLoader
                 for (var x = 0; x < row.Length; x++)
                 {
                     var p = row[x];
-                    // luminance
                     var l = 0.2126f * p.R + 0.7152f * p.G + 0.0722f * p.B;
-                    gray[y * pW + x] = (byte)Math.Clamp((int)l, 0, 255);
-
-                    var idx = (y * pW + x) * 4;
-                    color[idx + 0] = p.B; // B
-                    color[idx + 1] = p.G; // G
-                    color[idx + 2] = p.R; // R
-                    color[idx + 3] = p.A; // A
+                    gray[y * width + x] = (byte)Math.Clamp((int)l, 0, 255);
+                    var idx = (y * width + x) * 4;
+                    color[idx + 0] = p.B;
+                    color[idx + 1] = p.G;
+                    color[idx + 2] = p.R;
+                    color[idx + 3] = p.A;
                 }
             }
         });
+
+        // Preview和thumb仍用缩略图
+        var preview = img.Clone(ctx => ctx.Resize(new ResizeOptions
+        {
+            Mode = ResizeMode.Max,
+            Size = new Size(previewMaxSize, previewMaxSize)
+        }));
+        var thumb = img.Clone(ctx => ctx.Resize(new ResizeOptions
+        {
+            Mode = ResizeMode.Max,
+            Size = new Size(thumbnailSize, thumbnailSize)
+        }));
 
         // Convert ImageSharp images to Avalonia Bitmaps via memory stream
         Bitmap previewBitmap;
@@ -81,8 +76,8 @@ public class ImageLoader : IImageLoader
         return new ImageDocumentModel
         {
             FilePath = path,
-            Width = pW,
-            Height = pH,
+            Width = width,
+            Height = height,
             GrayscaleBuffer = gray,
             PreviewColorBuffer = color,
             Preview = previewBitmap,
