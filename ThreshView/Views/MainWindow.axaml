@@ -19,15 +19,14 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*" ColumnDefinitions="200,*,320" Margin="8">
-        <StackPanel Orientation="Horizontal" Grid.ColumnSpan="3" HorizontalAlignment="Right">
-            <Button Content="Open..." Command="{Binding OpenCommand}" Margin="4" />
-        </StackPanel>
-
+    <Grid RowDefinitions="*" ColumnDefinitions="200,*,320" Margin="8">
         <!-- Left: Thumbnails -->
-        <HeaderedContentControl Grid.Row="1" Grid.Column="0"  Theme="{DynamicResource GroupBox}">
+        <HeaderedContentControl Grid.Row="0" Grid.Column="0"  Theme="{DynamicResource GroupBox}">
             <HeaderedContentControl.Header>
-                <TextBlock Text="Images" FontWeight="Bold" />
+                <StackPanel Orientation="Horizontal" Margin="-6" VerticalAlignment="Stretch">
+                <TextBlock VerticalAlignment="Center" Text="Images" FontWeight="Bold" />
+                <Button VerticalAlignment="Center" Margin="20,0,0,0" Content="Open..." Command="{Binding OpenCommand}" />
+                </StackPanel>
             </HeaderedContentControl.Header>
             <ScrollViewer>
                 <ListBox ItemsSource="{Binding OpenImages}" SelectedItem="{Binding SelectedImage, Mode=TwoWay}">
@@ -46,24 +45,25 @@
 
         </HeaderedContentControl>
 
-        <u:ImageViewer Grid.Row="1" Grid.Column="1" Margin="4,0,4,0" Source="{Binding SelectedImage.ThresholdedPreview}" Stretch="Uniform" />
+        <u:ImageViewer Grid.Row="0" Grid.Column="1" Margin="4,0,4,0" Source="{Binding SelectedImage.ThresholdedPreview}" Stretch="Uniform" />
 
         <!-- Right: Threshold preview + controls -->
-        <HeaderedContentControl Grid.Row="1" Grid.Column="2" Padding="8" Theme="{DynamicResource GroupBox}">
+        <HeaderedContentControl Grid.Row="0" Grid.Column="2" Padding="8" Theme="{DynamicResource GroupBox}">
             <StackPanel>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="4">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0,0,5,0" Text="Threshold:" VerticalAlignment="Center" />
+                        <TextBlock Margin="0,0,5,0" Text="Threshold:" VerticalAlignment="Center" FontWeight="Bold"/>
                         <Border Theme="{DynamicResource RadioButtonGroupBorder}">
                             <StackPanel Orientation="Horizontal">
                                 <RadioButton Theme="{DynamicResource ButtonRadioButton}"
                                              GroupName="ThresholdDirection"
-                                             IsChecked="{Binding ThresholdMoreThen, Mode=TwoWay}">
+                                             IsChecked="{Binding ThresholdMoreThen, Mode=TwoWay}"
+                                             FontSize="12" FontWeight="Bold">
                                     &lt;
                                 </RadioButton>
                                 <RadioButton Theme="{DynamicResource ButtonRadioButton}"
                                              GroupName="ThresholdDirection"
-                                             IsChecked="{Binding !ThresholdMoreThen, Mode=TwoWay}">
+                                             IsChecked="{Binding !ThresholdMoreThen, Mode=TwoWay}" FontSize="12" FontWeight="Bold">
                                     &gt;
                                 </RadioButton>
                                 </StackPanel>
