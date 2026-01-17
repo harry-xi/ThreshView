@@ -50,7 +50,7 @@ public partial class MainWindowViewModel : ViewModelBase
         set =>
             this.RaiseAndSetIfChanged(ref field, value);
     } = 100;
-    
+
     public bool ThresholdMoreThen
     {
         get;
@@ -60,11 +60,11 @@ public partial class MainWindowViewModel : ViewModelBase
 
 
     public ICommand OpenCommand { get; }
-    
+
     public ICommand SaveMask { get; }
 
     public ICommand SaveOverlay { get; }
-    
+
     public IColorPalette ColorPalette { get; } = new ThresholdColorPaletteIColorPalette();
 
     private static IStorageProvider? GetStorageProvider()
@@ -77,7 +77,7 @@ public partial class MainWindowViewModel : ViewModelBase
         return storageProvider;
     }
 
-    
+
     private async Task OpenFilesAsync()
     {
         var storageProvider = GetStorageProvider();
@@ -97,7 +97,7 @@ public partial class MainWindowViewModel : ViewModelBase
             SelectedImage = vm;
         }
     }
-    
+
     private async Task SaveMaskAsync()
     {
         var storageProvider = GetStorageProvider();
@@ -109,7 +109,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             FileTypeChoices =
             [
-                new FilePickerFileType("PNG"){Patterns=["*.png"]}
+                new FilePickerFileType("PNG") { Patterns = ["*.png"] }
             ]
         });
         if (file == null) return;
@@ -135,7 +135,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             FileTypeChoices =
             [
-                new FilePickerFileType("PNG"){Patterns=["*.png"]}
+                new FilePickerFileType("PNG") { Patterns = ["*.png"] }
             ]
         });
         if (file == null) return;

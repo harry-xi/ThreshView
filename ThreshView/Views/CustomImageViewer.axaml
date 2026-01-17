@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ThreshView.Views.CustomImageViewer"
+             x:Name="ThisViewer">
+    <Grid>
+        <!-- Default background and overlay panel -->
+        <Border Name="PartBackgroundPanel"
+                Background="#EEE"
+                IsVisible="True"
+                CornerRadius="8"
+                Margin="0">
+            <Button Name="PartOpenImageButton"
+                    Content="Open Image..."
+                    Padding="24,8"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Command="{Binding OpenCommand, ElementName=ThisViewer}" />
+        </Border>
+
+        <Canvas Name="PartImageHost" />
+
+        <Border Name="PartGrayInfoPanel" Background="#BF333333" CornerRadius="4" Padding="4" HorizontalAlignment="Left"
+                VerticalAlignment="Top" Margin="8" IsHitTestVisible="False">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Gray:" Foreground="White" />
+                <TextBlock Name="PartGrayValue" Foreground="White" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
