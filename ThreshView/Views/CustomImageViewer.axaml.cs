@@ -49,10 +49,10 @@ public partial class CustomImageViewer : UserControl
             InvalidateVisual();
         });
 
-        _grayInfoPanel = this.FindControl<Border>("PART_GrayInfoPanel");
-        _grayValue = this.FindControl<TextBlock>("PART_GrayValue");
-        _backgroundPanel = this.FindControl<Border>("PART_BackgroundPanel");
-        _openImageButton = this.FindControl<Button>("PART_OpenImageButton");
+        _grayInfoPanel = this.FindControl<Border>("PartGrayInfoPanel");
+        _grayValue = this.FindControl<TextBlock>("PartGrayValue");
+        _backgroundPanel = this.FindControl<Border>("PartBackgroundPanel");
+        _openImageButton = this.FindControl<Button>("PartOpenImageButton");
         if (_openImageButton != null)
             _openImageButton.Click += (_, e) => OpenImageClicked?.Invoke(this, e);
         _backgroundPanel?.IsVisible = Source == null;
@@ -148,11 +148,13 @@ public partial class CustomImageViewer : UserControl
             _lastImageKey = ImageKey;
         }
 
-        if (change.Property == SourceProperty)
-        {
-            _backgroundPanel?.IsVisible = Source == null;
-            InvalidateVisual();
-        }
+if (change.Property == SourceProperty)
+    {
+        _backgroundPanel?.IsVisible = Source == null;
+        InvalidateVisual();
+        if (Source != null)
+            ResetZoomAndPan();
+    }
     }
 
     public override void Render(DrawingContext context)
