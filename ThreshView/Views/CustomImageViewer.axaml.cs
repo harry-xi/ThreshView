@@ -35,6 +35,8 @@ public partial class CustomImageViewer : UserControl
 
     private double _scale = 1.0;
 
+    private bool _pendingResetZoomAndPan = false;
+
     public CustomImageViewer()
     {
         AvaloniaXamlLoader.Load(this);
@@ -144,17 +146,31 @@ public partial class CustomImageViewer : UserControl
         base.OnPropertyChanged(change);
         if (change.Property == ImageKeyProperty)
         {
-            if (_lastImageKey == null || _lastImageKey != ImageKey) ResetZoomAndPan();
+            if (_lastImageKey == null || _lastImageKey != ImageKey)
+            {
+                if (Source != null)
+                {
+                    ResetZoomAndPan();
+                }
+                else
+                {
+                    _pendingResetZoomAndPan = true;
+                }
+            }
             _lastImageKey = ImageKey;
         }
 
-if (change.Property == SourceProperty)
-    {
-        _backgroundPanel?.IsVisible = Source == null;
-        InvalidateVisual();
-        if (Source != null)
-            ResetZoomAndPan();
-    }
+        if (change.Property == SourceProperty)
+        {
+            _backgroundPanel?.IsVisible = Source == null;
+            if (_pendingResetZoomAndPan || (_lastImageKey == null || _lastImageKey != ImageKey))
+            {
+                ResetZoomAndPan();
+                _pendingResetZoomAndPan = false;
+                _lastImageKey = ImageKey;
+            }
+            InvalidateVisual();
+        }
     }
 
     public override void Render(DrawingContext context)

@@ -12,5 +12,6 @@
 
     <Application.Styles>
         <semi:SemiTheme Locale="en-US" />
+        <semi:ColorPickerSemiTheme />
     </Application.Styles>
 </Application>
